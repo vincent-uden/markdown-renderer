@@ -12,6 +12,8 @@ wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 wasm-bindgen-futures = "0.4"
 js-sys = "0.3"
 markdown = "0.3.0"
+notify = "5.1.0"
+console_error_panic_hook = "0.1.7"
 
 [workspace]
 members = ["src-tauri"]

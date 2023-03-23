@@ -10,8 +10,10 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-fn read_markdown_source() -> String {
-    let p = PathBuf::from_str("E:\\Github\\trooper\\README.md").unwrap();
+fn read_markdown_source(path_str: &str) -> String {
+    println!("Before conversion");
+    let p = PathBuf::from_str(path_str).unwrap();
+    println!("After");
     fs::read_to_string(&p).unwrap()
 }
 
