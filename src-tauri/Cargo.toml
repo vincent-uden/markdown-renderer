@@ -1,11 +1,10 @@
 [package]
 name = "markdown-renderer"
 version = "0.0.0"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
 edition = "2021"
+description = "A experimental markdown renderer."
+license= "GPL-3.0-only"
+authors = ["Vincent Udén <vincentuden@gmail.com>"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
