@@ -27,8 +27,21 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "com.markdown-renderer.dev",
       "targets": "all"
+    },
+    "cli": {
+        "description": "",
+        "longDescription": "",
+        "beforeHelp": "",
+        "afterHelp": "",
+        "args": [
+            {
+                "name": "source",
+                "index": 1,
+                "takesValue": true
+            }
+        ]
     },
     "security": {
       "csp": null
