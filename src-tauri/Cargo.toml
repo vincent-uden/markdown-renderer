@@ -18,6 +18,7 @@ serde_json = "1.0"
 notify = "5.1.0"
 leptos = "0.2.4"
 clap = { version = "4.1.11", features = ["derive"] }
+glob = "0.3.1"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

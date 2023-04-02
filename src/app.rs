@@ -32,6 +32,12 @@ struct ReadMarkdownArgs<'a> {
     path: &'a str,
 }
 
+#[derive(Serialize, Deserialize)]
+struct GetMatchingPathsArgs<'a> {
+    path: &'a str,
+}
+
+
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
@@ -57,6 +63,7 @@ async fn get_cli_path() -> String {
 fn HomePage(cx: Scope) -> impl IntoView {
     let (md_src, set_md_src) = create_signal(cx, String::from(""));
     let (md_path, set_md_path) = create_signal(cx, String::from(""));
+    let (matching_paths, set_matching_paths) = create_signal(cx, Vec::<String>::new());
 
     let get_md_src = move || {
         spawn_local(async move {
@@ -68,6 +75,25 @@ fn HomePage(cx: Scope) -> impl IntoView {
                 set_md_src.set(markdown_src);
             }
         })
+    };
+
+    // Trigger on input
+    let get_matching_paths = move || {
+        spawn_local(async move {
+            let args = to_value(&GetMatchingPathsArgs {
+                path: &md_path.get(),
+            })
+            .unwrap();
+            if let Some(path_str) = invoke("get_matching_paths", args).await.as_string() {
+                let paths = path_str.split("\n");
+                set_matching_paths.update(|v| {
+                    v.clear();
+                    for p in paths {
+                        v.push(p.to_string());
+                    }
+                })
+            }
+        });
     };
 
     // Initial fetch if cli arg was passed
@@ -84,7 +110,10 @@ fn HomePage(cx: Scope) -> impl IntoView {
     });
 
     let md_rendered = move || md_src.with(|md_src| to_html(&md_src));
-    let on_path_input = move |ev| set_md_path.set(event_target_value(&ev));
+    let on_path_input = move |ev| {
+        get_matching_paths();
+        set_md_path.set(event_target_value(&ev));
+    };
 
     create_effect(cx, move |_| {
         md_src.get();
@@ -105,6 +134,17 @@ fn HomePage(cx: Scope) -> impl IntoView {
         <main class="theme-dark">
             <input class="path-input no-print" prop:value=move || md_path.get() on:input=on_path_input />
             <div class="md-container" inner_html=md_rendered />
+            <div class="match-overlay">
+                <For
+                    each=move || matching_paths.get()
+                    key=|p| p.clone()
+                    view=move |cx, path: String| {
+                        view! {
+                            cx,
+                            <p>{path}</p>
+                        }
+                }/>
+            </div>
             <script type_="text/x-mathjax-config" src="public/mathjaxconf.js" />
             <script id="MathJax-script" async src="public/tex-mml-svg.js" />
         </main>

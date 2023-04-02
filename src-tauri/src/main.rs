@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use std::{fs, path::PathBuf, str::FromStr};
+use glob::glob;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -19,6 +20,21 @@ fn read_markdown_source(path: &str) -> String {
     return String::new();
 }
 
+// This doesn't work every single time. Find out why
+#[tauri::command]
+fn get_matching_paths(path: &str) -> String {
+    let mut output = Vec::new();
+    if let Ok(paths) = glob(&format!("{}*", path)) {
+        for entry in paths {
+            match entry {
+                Ok(p) => output.push(String::from(p.to_str().unwrap())),
+                Err(_) => {},
+            }
+        }
+    }
+    return output.join("\n");
+}
+
 fn main() {
     tauri::Builder::default()
         .setup(|app| {
@@ -30,7 +46,7 @@ fn main() {
             }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![greet, read_markdown_source])
+        .invoke_handler(tauri::generate_handler![greet, read_markdown_source, get_matching_paths])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

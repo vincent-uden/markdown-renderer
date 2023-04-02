@@ -173,3 +173,12 @@ input.path-input {
         display: initial;
     }
 }
+
+div.match-overlay {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    min-width: 100px;
+    min-height: 20px;
+    background-color: red;
+}
